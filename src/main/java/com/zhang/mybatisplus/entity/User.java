@@ -4,20 +4,24 @@ package com.zhang.mybatisplus.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("user")
-public class User {
-    //主键  Mybatis-plus默认以id作为数据库主键,并且id采用雪花算法生成，如果是其他名字需要添加注解@TableId
+@EqualsAndHashCode
+public class User extends Model<User>{
+    private static final long serialVersionUID = -4210671672219766048L;
+    // 主键 Mybatis-plus默认以id作为数据库主键,并且id采用雪花算法生成，如果是其他名字需要添加注解@TableId
     // @TableId
     // private Long userId;
     private Long id;

@@ -1,7 +1,10 @@
 package com.zhang.mybatisplus.test;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.zhang.mybatisplus.entity.User;
 import com.zhang.mybatisplus.mapper.UserMapper;
 import org.junit.Test;
@@ -214,5 +217,46 @@ public class SimpleTest {
         List<User> users = userMapper.selectList(queryWrapper);
         users.forEach(System.out::println);
     }
+
+    /**
+     * 11、按照直属上级分组，查询每组的平均年龄、最大年龄、最小年龄。
+            并且只取年龄总和小于500的组
+     */
+    @Test
+    public void testSelectByMap2() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+
+        queryWrapper.select("avg(age) avg_age","max(age) max_age","min(age) min_age")
+            .groupBy("manager_id").having("sum(age) < {0}", 500);
+        List<Map<String,Object>> users = userMapper.selectMaps(queryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void testSelectByLambda() {
+        //LambdaQueryWrapper<User> lambda = new QueryWrapper<User>().lambda();
+        //LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.<User>lambdaQuery();
+        lambdaQueryWrapper.like(User::getName, "雨").lt(User::getAge, 40);
+        List<User> users = userMapper.selectList(lambdaQueryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void testLambdaQueryChain() {
+        LambdaQueryChainWrapper<User> lambdaQueryChainWrapper = new LambdaQueryChainWrapper<>(userMapper);
+        List<User> users = lambdaQueryChainWrapper.like(User::getName, "雨").gt(User::getAge, 20).list();
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void testSelectCustomSql() {
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.<User>lambdaQuery();
+        lambdaQueryWrapper.like(User::getName, "雨").lt(User::getAge, 40);
+        List<User> users = userMapper.selectAll(lambdaQueryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    
 
 }
