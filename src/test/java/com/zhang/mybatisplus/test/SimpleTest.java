@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.zhang.mybatisplus.config.MyBatisPlusConfig;
 import com.zhang.mybatisplus.entity.User;
 import com.zhang.mybatisplus.mapper.UserMapper;
 import org.junit.Test;
@@ -29,6 +30,7 @@ public class SimpleTest {
 
     @Test
     public void testSelect() {
+        //MyBatisPlusConfig.myTableName.set("user_2019");
         List<User> users = userMapper.selectList(null);
         //Assert.assertEquals(5,users.size());
         System.out.println(users);
@@ -94,7 +96,7 @@ public class SimpleTest {
     @Test
     public void testWrapper3() {
         //名字为王姓或者年龄大于等于25，按照年龄降序排列，年龄相同按照id升序排列
-        //SELECT * FROM user WHERE (name LIKE ? OR age >= ?) ORDER BY age DESC , id ASC 
+        //SELECT * FROM user WHERE (name LIKE ? OR age >= ?) ORDER BY age DESC , id ASC
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.likeRight("name", "王").or().ge("age", 30).orderByDesc("age").orderByAsc("id");
         List<User> users = userMapper.selectList(queryWrapper);
@@ -104,8 +106,8 @@ public class SimpleTest {
     @Test
     public void testWrapper4() {
         //创建日期为2019年2月14日并且直属上级为名字为王姓
-        //SELECT * FROM user WHERE (date_format(create_time,'%Y-%m-%d') = ? 
-        //    AND manager_id IN (select id from user where name like '王%')) 
+        //SELECT * FROM user WHERE (date_format(create_time,'%Y-%m-%d') = ?
+        //    AND manager_id IN (select id from user where name like '王%'))
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.apply("date_format(create_time,'%Y-%m-%d') = {0}", "2019-02-14")
             .inSql("manager_id", "select id from user where name like '王%'");
@@ -148,7 +150,7 @@ public class SimpleTest {
     @Test
     public void testWrapper8() {
         //年龄为30、31、34、35
-        //age in (30、31、34、35) 
+        //age in (30、31、34、35)
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("age", Arrays.asList(30,31,34,35));
         List<User> users = userMapper.selectList(queryWrapper);
@@ -257,6 +259,6 @@ public class SimpleTest {
         users.forEach(System.out::println);
     }
 
-    
+
 
 }
